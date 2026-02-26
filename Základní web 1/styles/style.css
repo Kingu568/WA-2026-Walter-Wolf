@@ -1,15 +1,17 @@
 body {
     min-height: 100vh;
+    margin: 0;
     background-color: #ffbbc3;
 }
-header{
+header {
     background-color: #f799af;
-    padding: 20px;
+    padding: 5px 10px;
     text-align: center;
     color: #fff;
-    border-radius: 10px;
-    padding: 10px; 
-    margin-bottom: 5px;
+    width: 100%;
+}
+header h1{
+    font-size: 24px;
 }
 h1{
     color: #ffffff;
@@ -22,13 +24,15 @@ p{
     line-height: 1.5;
     
 }
-div[class="container"]{
+nav {
     background-color: #f3cbd0;
-    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 article.card {
     display: flex;
@@ -36,7 +40,8 @@ article.card {
     align-items: center;
     justify-content: center;
 
-    width: 500px;
+    width: 70%;
+    max-width: 700px;
     padding: 20px;
     background-color: #ffe4ec;
     border-radius: 16px;
@@ -68,4 +73,23 @@ nav li a {
 
 nav li a:hover {
   background-color: #a8a8a8;
+}
+
+footer {
+    background-color: #f799af;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+/*school added something*/
+.page-wrapper{
+width: 100%;
 }
