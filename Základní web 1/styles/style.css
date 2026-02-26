@@ -36,13 +36,17 @@ article.card {
     align-items: center;
     justify-content: center;
 
-    width: 300px;
+    width: 500px;
     padding: 20px;
     background-color: #ffe4ec;
     border-radius: 16px;
     margin: 40px auto;
     border: 1px solid #f8c8d8;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    word-wrap: break-word;    
+    overflow-wrap: break-word;  
+    word-break: break-word;     
 }
 
 nav ul {
