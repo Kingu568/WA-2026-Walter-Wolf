@@ -18,29 +18,44 @@
     </header>
 
     <main>
-        <main>
-    <h2>Dostupné knihy</h2>
+        <h2>Dostupné knihy</h2>
 
-    <?php if (!empty($books)): ?>
-        <ul>
-            <?php foreach ($books as $book): ?>
-                <li>
-                    <strong><?= htmlspecialchars($book['title']) ?></strong>
-                    — <?= htmlspecialchars($book['author']) ?>
-                    <?php if (!empty($book['year'])): ?>
-                        (<?= htmlspecialchars($book['year']) ?>)
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>V databázi zatím nejsou žádné knihy.</p>
-    <?php endif; ?>
-</main>
+        <?php if (!empty($books)): ?>
+            <table border="1" cellpadding="8" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Název</th>
+                        <th>Autor</th>
+                        <th>Kategorie</th>
+                        <th>Rok</th>
+                        <th>Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($books as $book): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($book['id']) ?></td>
+                            <td><?= htmlspecialchars($book['title']) ?></td>
+                            <td><?= htmlspecialchars($book['author']) ?></td>
+                            <td><?= htmlspecialchars($book['category'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($book['year'] ?? '') ?></td>
+                            <td>
+                                <a href="<?= BASE_URL ?>/index.php?url=book/show/<?= $book['id'] ?>">Detail</a> |
+                                <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>">Upravit</a> |
+                                <a href="<?= BASE_URL ?>/index.php?url=book/delete/<?= $book['id'] ?>" onclick="return confirm('Opravdu chcete tuto knihu smazat?')">Smazat</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>V databázi zatím nejsou žádné knihy.</p>
+        <?php endif; ?>
     </main>
 
     <footer>
-        <p>&copy; WA 2026 - Walter Wolf</p>
+        <p>&copy; WA 2026 - Výukový projekt</p>
     </footer>
 </body>
 </html>
