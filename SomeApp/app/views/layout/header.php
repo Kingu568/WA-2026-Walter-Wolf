@@ -20,16 +20,41 @@
                 <ul class="flex flex-wrap gap-3 items-center">
                     <li>
                         <a href="<?= BASE_URL ?>/index.php"
-                           class="inline-block rounded-full bg-sky-100 px-5 py-2.5 text-sky-700 font-medium shadow-sm hover:bg-sky-200 transition">
+                        class="inline-block rounded-full bg-sky-100 px-5 py-2.5 text-sky-700 font-medium shadow-sm hover:bg-sky-200 transition">
                             Seznam knih
                         </a>
                     </li>
-                    <li>
-                        <a href="<?= BASE_URL ?>/index.php?url=book/create"
-                           class="inline-block rounded-full bg-cyan-300 px-5 py-2.5 text-white font-medium shadow-sm hover:bg-cyan-400 transition">
-                            + Přidat knihu
-                        </a>
-                    </li>
+
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li>
+                            <a href="<?= BASE_URL ?>/index.php?url=book/create"
+                            class="inline-block rounded-full bg-cyan-300 px-5 py-2.5 text-white font-medium shadow-sm hover:bg-cyan-400 transition">
+                                + Přidat knihu
+                            </a>
+                        </li>
+                        <li class="text-sky-500 text-sm">
+                            Ahoj, <span class="font-semibold"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                        </li>
+                        <li>
+                            <a href="<?= BASE_URL ?>/index.php?url=auth/logout"
+                            class="inline-block rounded-full bg-rose-100 px-5 py-2.5 text-rose-700 font-medium shadow-sm hover:bg-rose-200 transition">
+                                Odhlásit
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="<?= BASE_URL ?>/index.php?url=auth/login"
+                            class="inline-block rounded-full bg-sky-100 px-5 py-2.5 text-sky-700 font-medium shadow-sm hover:bg-sky-200 transition">
+                                Přihlásit
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= BASE_URL ?>/index.php?url=auth/register"
+                            class="inline-block rounded-full bg-cyan-300 px-5 py-2.5 text-white font-medium shadow-sm hover:bg-cyan-400 transition">
+                                Registrace
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>

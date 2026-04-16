@@ -29,10 +29,13 @@ class Book
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create(BookDTO $bookData)
+    public function create(BookDTO $bookData, ?int $createdBy = null)
     {
-        $sql = "INSERT INTO books (title, author, category, subcategory, year, price, isbn, description, link, images)
-                VALUES (:title, :author, :category, :subcategory, :year, :price, :isbn, :description, :link, :images)";
+        $sql = "INSERT INTO books (
+                    title, author, category, subcategory, year, price, isbn, description, link, images, created_by, updated_by
+                ) VALUES (
+                    :title, :author, :category, :subcategory, :year, :price, :isbn, :description, :link, :images, :created_by, :updated_by
+                )";
 
         $stmt = $this->db->prepare($sql);
 
@@ -46,7 +49,9 @@ class Book
             ':isbn' => $bookData->isbn !== '' ? $bookData->isbn : null,
             ':description' => $bookData->description !== '' ? $bookData->description : null,
             ':link' => $bookData->link !== '' ? $bookData->link : null,
-            ':images' => json_encode($bookData->images)
+            ':images' => json_encode($bookData->images),
+            ':created_by' => $createdBy,
+            ':updated_by' => $createdBy
         ]);
     }
 
