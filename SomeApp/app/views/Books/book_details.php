@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
-
+<!-- LOGO PINK FFB6C1-->
 <main class="container mx-auto px-6 pb-10 pt-6 flex-grow">
     <div class="max-w-4xl mx-auto bg-white/85 backdrop-blur-sm border border-sky-100 rounded-3xl shadow-lg p-8">
         <div class="flex flex-wrap gap-3 mb-6">
