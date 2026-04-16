@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/Book.php';
+require_once __DIR__ . '/../dto/BookDTO.php';
 
 class BookController
 {
@@ -16,78 +17,85 @@ class BookController
     {
         require_once __DIR__ . '/../views/books/book_create.php';
     }
+
     public function show($id = null)
-{
-    if (!$id) {
-        echo "Nebylo zadáno ID knihy.";
-        return;
-    }
-
-    $bookModel = new Book();
-    $book = $bookModel->getById($id);
-
-    if (!$book) {
-        echo "Kniha nebyla nalezena.";
-        return;
-    }
-
-    require_once __DIR__ . '/../views/books/book_details.php';
-}
-    public function store()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = trim($_POST['title'] ?? '');
-            $author = trim($_POST['author'] ?? '');
-            $category = trim($_POST['category'] ?? '');
-            $subcategory = trim($_POST['subcategory'] ?? ''); // FIX
-            $year = (int)($_POST['year'] ?? 0);
-            $price = isset($_POST['price']) ? (float)$_POST['price'] : null;
-            $isbn = trim($_POST['isbn'] ?? '');
-            $description = trim($_POST['description'] ?? '');
-            $link = trim($_POST['link'] ?? '');
-            $uploadedImages = [];
-
-            if ($title === '' || $author === '') {
-                echo "Název a autor jsou povinné.";
-                return;
-            }
-
-            $bookModel = new Book();
-            $isCreated = $bookModel->create(
-                $title,
-                $author,
-                $category,
-                $subcategory,
-                $year,
-                $price,
-                $isbn,
-                $description,
-                $link,
-                $uploadedImages
-            );
-
-            if ($isCreated) {
-                header('Location: ' . BASE_URL . '/index.php');
-                exit;
-            } else {
-                echo "Chyba při ukládání knihy.";
-            }
-        }
-    }
-
-    public function edit($id = null)
     {
         if (!$id) {
-            echo "Nebylo zadáno ID knihy k úpravě.";
-            return;
+            $this->addErrorMessage('Nebylo zadáno ID knihy.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
         }
 
         $bookModel = new Book();
         $book = $bookModel->getById($id);
 
         if (!$book) {
-            echo "Požadovaná kniha nebyla nalezena.";
-            return;
+            $this->addErrorMessage('Kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        require_once __DIR__ . '/../views/books/book_details.php';
+    }
+
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->addNoticeMessage('Formulář pro přidání knihy nebyl odeslán.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $uploadedImages = $this->processImageUploads();
+
+        $bookData = new BookDTO([
+            'title' => $_POST['title'] ?? '',
+            'author' => $_POST['author'] ?? '',
+            'isbn' => $_POST['isbn'] ?? '',
+            'category' => $_POST['category'] ?? '',
+            'subcategory' => $_POST['subcategory'] ?? '',
+            'year' => $_POST['year'] ?? 0,
+            'price' => $_POST['price'] ?? null,
+            'link' => $_POST['link'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'images' => $uploadedImages
+        ]);
+
+        if ($bookData->title === '' || $bookData->author === '') {
+            $this->addErrorMessage('Název a autor jsou povinné.');
+            header('Location: ' . BASE_URL . '/index.php?url=book/create');
+            exit;
+        }
+
+        $bookModel = new Book();
+        $isCreated = $bookModel->create($bookData);
+
+        if ($isCreated) {
+            $this->addSuccessMessage('Kniha byla úspěšně uložena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $this->addErrorMessage('Chyba při ukládání knihy.');
+        header('Location: ' . BASE_URL . '/index.php?url=book/create');
+        exit;
+    }
+
+    public function edit($id = null)
+    {
+        if (!$id) {
+            $this->addErrorMessage('Nebylo zadáno ID knihy k úpravě.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $bookModel = new Book();
+        $book = $bookModel->getById($id);
+
+        if (!$book) {
+            $this->addErrorMessage('Požadovaná kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
         }
 
         require_once __DIR__ . '/../views/books/book_edit.php';
@@ -96,69 +104,217 @@ class BookController
     public function update($id = null)
     {
         if (!$id) {
-            echo "Nebylo zadáno ID knihy k aktualizaci.";
-            return;
+            $this->addErrorMessage('Nebylo zadáno ID knihy k aktualizaci.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = trim($_POST['title'] ?? '');
-            $author = trim($_POST['author'] ?? '');
-            $isbn = trim($_POST['isbn'] ?? '');
-            $category = trim($_POST['category'] ?? '');
-            $subcategory = trim($_POST['subcategory'] ?? '');
-            $year = (int)($_POST['year'] ?? 0);
-            $price = (float)($_POST['price'] ?? 0);
-            $link = trim($_POST['link'] ?? '');
-            $description = trim($_POST['description'] ?? '');
-
-            $uploadedImages = [];
-
-            if ($title === '' || $author === '') {
-                echo "Název a autor jsou povinné.";
-                return;
-            }
-
-            $bookModel = new Book();
-            $isUpdated = $bookModel->update(
-                $id,
-                $title,
-                $author,
-                $category,
-                $subcategory,
-                $year,
-                $price,
-                $isbn,
-                $description,
-                $link,
-                $uploadedImages
-            );
-
-            if ($isUpdated) {
-                header('Location: ' . BASE_URL . '/index.php');
-                exit;
-            } else {
-                echo "Změny se nepodařilo uložit.";
-            }
-        } else {
-            echo "Pro úpravu knihy je nutné odeslat formulář.";
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->addErrorMessage('Pro úpravu knihy je nutné odeslat formulář.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
         }
+
+        $bookModel = new Book();
+        $existingBook = $bookModel->getById($id);
+
+        if (!$existingBook) {
+            $this->addErrorMessage('Požadovaná kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $existingImages = [];
+        if (!empty($existingBook['images'])) {
+            $decodedImages = json_decode($existingBook['images'], true);
+            if (is_array($decodedImages)) {
+                $existingImages = $decodedImages;
+            }
+        }
+
+        $newUploadedImages = $this->processImageUploads();
+
+        $allImages = array_values(array_merge($existingImages, $newUploadedImages));
+
+        $bookData = new BookDTO([
+            'title' => $_POST['title'] ?? '',
+            'author' => $_POST['author'] ?? '',
+            'isbn' => $_POST['isbn'] ?? '',
+            'category' => $_POST['category'] ?? '',
+            'subcategory' => $_POST['subcategory'] ?? '',
+            'year' => $_POST['year'] ?? 0,
+            'price' => $_POST['price'] ?? null,
+            'link' => $_POST['link'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'images' => $allImages
+        ]);
+
+        if ($bookData->title === '' || $bookData->author === '') {
+            $this->addErrorMessage('Název a autor jsou povinné.');
+            header('Location: ' . BASE_URL . '/index.php?url=book/edit/' . $id);
+            exit;
+        }
+
+        $isUpdated = $bookModel->update($id, $bookData);
+
+        if ($isUpdated) {
+            $this->addSuccessMessage('Kniha byla úspěšně upravena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $this->addErrorMessage('Změny se nepodařilo uložit.');
+        header('Location: ' . BASE_URL . '/index.php?url=book/edit/' . $id);
+        exit;
     }
 
     public function delete($id = null)
     {
         if (!$id) {
-            echo "Nebylo zadáno ID knihy ke smazání.";
-            return;
+            $this->addErrorMessage('Nebylo zadáno ID knihy ke smazání.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
         }
 
         $bookModel = new Book();
+        $book = $bookModel->getById($id);
+
+        if ($book) {
+            if (!empty($book['images'])) {
+                $images = json_decode($book['images'], true);
+
+                if (is_array($images)) {
+                    $uploadDir = __DIR__ . '/../../public/uploads/';
+
+                    foreach ($images as $image) {
+                        $filePath = $uploadDir . $image;
+
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        }
+                    }
+                }
+            }
+        }
+
         $isDeleted = $bookModel->delete($id);
 
         if ($isDeleted) {
+            $this->addSuccessMessage('Kniha byla úspěšně smazána.');
+        } else {
+            $this->addErrorMessage('Knihu se nepodařilo smazat.');
+        }
+
+        header('Location: ' . BASE_URL . '/index.php');
+        exit;
+    }
+
+    public function deleteImage($bookId = null, $imageName = null)
+    {
+        if (!$bookId || !$imageName) {
+            $this->addErrorMessage('Chybí data pro smazání obrázku.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
-        } else {
-            echo "Knihu se nepodařilo smazat.";
         }
+
+        $bookModel = new Book();
+        $book = $bookModel->getById($bookId);
+
+        if (!$book) {
+            $this->addErrorMessage('Kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        $images = [];
+
+        if (!empty($book['images'])) {
+            $decoded = json_decode($book['images'], true);
+            if (is_array($decoded)) {
+                $images = $decoded;
+            }
+        }
+
+        $images = array_filter($images, function ($img) use ($imageName) {
+            return $img !== $imageName;
+        });
+
+        $uploadDir = __DIR__ . '/../../public/uploads/';
+        $filePath = $uploadDir . $imageName;
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $bookData = new BookDTO([
+            'title' => $book['title'],
+            'author' => $book['author'],
+            'isbn' => $book['isbn'],
+            'category' => $book['category'],
+            'subcategory' => $book['subcategory'],
+            'year' => $book['year'],
+            'price' => $book['price'],
+            'link' => $book['link'],
+            'description' => $book['description'],
+            'images' => array_values($images)
+        ]);
+
+        $bookModel->update($bookId, $bookData);
+
+        $this->addSuccessMessage('Obrázek byl smazán.');
+
+        header('Location: ' . BASE_URL . '/index.php?url=book/edit/' . $bookId);
+        exit;
+    }
+
+    protected function addSuccessMessage($message)
+    {
+        $_SESSION['messages']['success'][] = $message;
+    }
+
+    protected function addNoticeMessage($message)
+    {
+        $_SESSION['messages']['notice'][] = $message;
+    }
+
+    protected function addErrorMessage($message)
+    {
+        $_SESSION['messages']['error'][] = $message;
+    }
+
+    protected function processImageUploads()
+    {
+        $uploadedFiles = [];
+        $uploadDir = __DIR__ . '/../../public/uploads/';
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $fileCount = count($_FILES['images']['name']);
+
+            for ($i = 0; $i < $fileCount; $i++) {
+                if ($_FILES['images']['error'][$i] === UPLOAD_ERR_OK) {
+                    $tmpName = $_FILES['images']['tmp_name'][$i];
+                    $originalName = basename($_FILES['images']['name'][$i]);
+                    $fileExtension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+                    if (!in_array($fileExtension, $allowedExtensions, true)) {
+                        continue;
+                    }
+
+                    $newName = 'book_' . uniqid() . '_' . substr(md5((string) mt_rand()), 0, 4) . '.' . $fileExtension;
+                    $targetFilePath = $uploadDir . $newName;
+
+                    if (move_uploaded_file($tmpName, $targetFilePath)) {
+                        $uploadedFiles[] = $newName;
+                    }
+                }
+            }
+        }
+
+        return $uploadedFiles;
     }
 }

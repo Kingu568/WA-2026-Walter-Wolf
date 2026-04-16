@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/../dto/BookDTO.php';
 
 class Book
 {
@@ -28,7 +29,7 @@ class Book
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create($title, $author, $category, $subcategory, $year, $price = null, $isbn = null, $description = null, $link = null, $images = [])
+    public function create(BookDTO $bookData)
     {
         $sql = "INSERT INTO books (title, author, category, subcategory, year, price, isbn, description, link, images)
                 VALUES (:title, :author, :category, :subcategory, :year, :price, :isbn, :description, :link, :images)";
@@ -36,20 +37,20 @@ class Book
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            ':title' => $title,
-            ':author' => $author,
-            ':category' => $category ?: null,
-            ':subcategory' => $subcategory ?: null,
-            ':year' => $year ?: null,
-            ':price' => $price ?: null,
-            ':isbn' => $isbn ?: null,
-            ':description' => $description ?: null,
-            ':link' => $link ?: null,
-            ':images' => json_encode($images)
+            ':title' => $bookData->title,
+            ':author' => $bookData->author,
+            ':category' => $bookData->category !== '' ? $bookData->category : null,
+            ':subcategory' => $bookData->subcategory !== '' ? $bookData->subcategory : null,
+            ':year' => $bookData->year !== '' && $bookData->year != 0 ? $bookData->year : null,
+            ':price' => $bookData->price !== '' && $bookData->price !== null ? $bookData->price : null,
+            ':isbn' => $bookData->isbn !== '' ? $bookData->isbn : null,
+            ':description' => $bookData->description !== '' ? $bookData->description : null,
+            ':link' => $bookData->link !== '' ? $bookData->link : null,
+            ':images' => json_encode($bookData->images)
         ]);
     }
 
-    public function update($id, $title, $author, $category, $subcategory, $year, $price, $isbn, $description, $link, $images = [])
+    public function update($id, BookDTO $bookData)
     {
         $sql = "UPDATE books
                 SET title = :title,
@@ -68,16 +69,16 @@ class Book
 
         return $stmt->execute([
             ':id' => $id,
-            ':title' => $title,
-            ':author' => $author,
-            ':category' => $category ?: null,
-            ':subcategory' => $subcategory ?: null,
-            ':year' => $year ?: null,
-            ':price' => $price ?: null,
-            ':isbn' => $isbn ?: null,
-            ':description' => $description ?: null,
-            ':link' => $link ?: null,
-            ':images' => json_encode($images)
+            ':title' => $bookData->title,
+            ':author' => $bookData->author,
+            ':category' => $bookData->category !== '' ? $bookData->category : null,
+            ':subcategory' => $bookData->subcategory !== '' ? $bookData->subcategory : null,
+            ':year' => $bookData->year !== '' && $bookData->year != 0 ? $bookData->year : null,
+            ':price' => $bookData->price !== '' && $bookData->price !== null ? $bookData->price : null,
+            ':isbn' => $bookData->isbn !== '' ? $bookData->isbn : null,
+            ':description' => $bookData->description !== '' ? $bookData->description : null,
+            ':link' => $bookData->link !== '' ? $bookData->link : null,
+            ':images' => json_encode($bookData->images)
         ]);
     }
 
