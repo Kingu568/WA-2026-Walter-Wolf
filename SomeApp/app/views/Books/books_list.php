@@ -39,15 +39,18 @@
                                            class="px-3 py-2 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-700 text-sm font-medium transition">
                                             Detail
                                         </a>
-                                        <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
-                                           class="px-3 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-sm font-medium transition">
-                                            Upravit
-                                        </a>
-                                        <a href="<?= BASE_URL ?>/index.php?url=book/delete/<?= $book['id'] ?>"
-                                           onclick="return confirm('Opravdu chcete tuto knihu smazat?')"
-                                           class="px-3 py-2 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-700 text-sm font-medium transition">
-                                            Smazat
-                                        </a>
+
+                                        <?php if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] === (int) $book['created_by']): ?>
+                                            <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
+                                               class="px-3 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-sm font-medium transition">
+                                                Upravit
+                                            </a>
+                                            <a href="<?= BASE_URL ?>/index.php?url=book/delete/<?= $book['id'] ?>"
+                                               onclick="return confirm('Opravdu chcete tuto knihu smazat?')"
+                                               class="px-3 py-2 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-700 text-sm font-medium transition">
+                                                Smazat
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

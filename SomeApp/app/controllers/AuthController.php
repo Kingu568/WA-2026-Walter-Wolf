@@ -36,6 +36,31 @@ class AuthController
             header('Location: ' . BASE_URL . '/index.php?url=auth/register');
             exit;
         }
+/* Kontorola hesla 
+        if (strlen($password) < 8) {
+            $this->addErrorMessage('Heslo musí mít alespoň 8 znaků.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/register');
+            exit;
+        }
+
+        if (!preg_match('/[a-z]/', $password)) {
+            $this->addErrorMessage('Heslo musí obsahovat alespoň jedno malé písmeno.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/register');
+            exit;
+        }
+
+        if (!preg_match('/[A-Z]/', $password)) {
+            $this->addErrorMessage('Heslo musí obsahovat alespoň jedno velké písmeno.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/register');
+            exit;
+        }
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $this->addErrorMessage('Heslo musí obsahovat alespoň jedno číslo.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/register');
+            exit;
+        }
+*/
 
         $db = (new Database())->getConnection();
         $userModel = new User($db);

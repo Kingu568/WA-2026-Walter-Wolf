@@ -27,18 +27,15 @@
 
                 <div>
                     <label for="password" class="block mb-2 text-sm font-medium text-sky-700">Heslo *</label>
-                    <input type="password" id="password" name="password" required
-                           class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
+                    <input type="password" id="password" name="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                        title="Heslo musí mít alespoň 8 znaků, jedno malé písmeno, jedno velké písmeno a jedno číslo."
+                        class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
                 </div>
 
                 <div>
                     <label for="password_confirm" class="block mb-2 text-sm font-medium text-sky-700">Potvrzení hesla *</label>
                     <input type="password" id="password_confirm" name="password_confirm" required
                            class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
-                </div>
-
-                <div class="md:col-span-2 pt-2">
-                    <h3 class="text-sm font-semibold text-sky-700 border-b border-sky-100 pb-2">Osobní údaje (volitelné)</h3>
                 </div>
 
                 <div>

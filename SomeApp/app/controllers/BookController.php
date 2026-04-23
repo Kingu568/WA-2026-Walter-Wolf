@@ -15,7 +15,11 @@ class BookController
 
     public function create()
     {
-        $this->requireLogin();
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro přidání knihy se musíte nejprve přihlásit.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
+            exit;
+        }
 
         require_once __DIR__ . '/../views/books/book_create.php';
     }
@@ -42,11 +46,15 @@ class BookController
 
     public function store()
     {
-        $this->requireLogin();
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->addNoticeMessage('Formulář pro přidání knihy nebyl odeslán.');
             header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro uložení knihy musíte být přihlášeni.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
             exit;
         }
 
@@ -72,7 +80,7 @@ class BookController
         }
 
         $bookModel = new Book();
-        $isCreated = $bookModel->create($bookData, $_SESSION['user_id']);
+        $isCreated = $bookModel->create($bookData, (int) $_SESSION['user_id']);
 
         if ($isCreated) {
             $this->addSuccessMessage('Kniha byla úspěšně uložena.');
@@ -87,7 +95,11 @@ class BookController
 
     public function edit($id = null)
     {
-        $this->requireLogin();
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro úpravu knihy se musíte nejprve přihlásit.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
+            exit;
+        }
 
         if (!$id) {
             $this->addErrorMessage('Nebylo zadáno ID knihy k úpravě.');
@@ -104,13 +116,17 @@ class BookController
             exit;
         }
 
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
+            $this->addErrorMessage('Nemáte oprávnění upravovat tuto knihu, protože nejste jejím autorem.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
         require_once __DIR__ . '/../views/books/book_edit.php';
     }
 
     public function update($id = null)
     {
-        $this->requireLogin();
-
         if (!$id) {
             $this->addErrorMessage('Nebylo zadáno ID knihy k aktualizaci.');
             header('Location: ' . BASE_URL . '/index.php');
@@ -118,8 +134,14 @@ class BookController
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->addErrorMessage('Pro úpravu knihy je nutné odeslat formulář.');
+            $this->addNoticeMessage('Pro úpravu knihy je nutné odeslat formulář.');
             header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro uložení změn se musíte nejprve přihlásit.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
             exit;
         }
 
@@ -128,6 +150,12 @@ class BookController
 
         if (!$existingBook) {
             $this->addErrorMessage('Požadovaná kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        if ((int) $existingBook['created_by'] !== (int) $_SESSION['user_id']) {
+            $this->addErrorMessage('Nemáte oprávnění ukládat změny u této knihy, protože nejste jejím autorem.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
@@ -162,7 +190,7 @@ class BookController
             exit;
         }
 
-        $isUpdated = $bookModel->update($id, $bookData, $_SESSION['user_id']);
+        $isUpdated = $bookModel->update($id, $bookData, (int) $_SESSION['user_id']);
 
         if ($isUpdated) {
             $this->addSuccessMessage('Kniha byla úspěšně upravena.');
@@ -177,7 +205,11 @@ class BookController
 
     public function delete($id = null)
     {
-        $this->requireLogin();
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro smazání knihy se musíte nejprve přihlásit.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
+            exit;
+        }
 
         if (!$id) {
             $this->addErrorMessage('Nebylo zadáno ID knihy ke smazání.');
@@ -188,19 +220,29 @@ class BookController
         $bookModel = new Book();
         $book = $bookModel->getById($id);
 
-        if ($book) {
-            if (!empty($book['images'])) {
-                $images = json_decode($book['images'], true);
+        if (!$book) {
+            $this->addErrorMessage('Kniha nebyla nalezena, pravděpodobně již byla smazána.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
 
-                if (is_array($images)) {
-                    $uploadDir = __DIR__ . '/../../public/uploads/';
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
+            $this->addErrorMessage('Nemáte oprávnění smazat tuto knihu, protože nejste jejím autorem.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
 
-                    foreach ($images as $image) {
-                        $filePath = $uploadDir . $image;
+        if (!empty($book['images'])) {
+            $images = json_decode($book['images'], true);
 
-                        if (file_exists($filePath)) {
-                            unlink($filePath);
-                        }
+            if (is_array($images)) {
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+
+                foreach ($images as $image) {
+                    $filePath = $uploadDir . $image;
+
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
                     }
                 }
             }
@@ -209,9 +251,9 @@ class BookController
         $isDeleted = $bookModel->delete($id);
 
         if ($isDeleted) {
-            $this->addSuccessMessage('Kniha byla úspěšně smazána.');
+            $this->addSuccessMessage('Kniha byla trvale smazána z databáze.');
         } else {
-            $this->addErrorMessage('Knihu se nepodařilo smazat.');
+            $this->addErrorMessage('Nastala chyba. Knihu se nepodařilo smazat.');
         }
 
         header('Location: ' . BASE_URL . '/index.php');
@@ -220,7 +262,11 @@ class BookController
 
     public function deleteImage($bookId = null, $imageName = null)
     {
-        $this->requireLogin();
+        if (!isset($_SESSION['user_id'])) {
+            $this->addErrorMessage('Pro smazání obrázku se musíte nejprve přihlásit.');
+            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
+            exit;
+        }
 
         if (!$bookId || !$imageName) {
             $this->addErrorMessage('Chybí data pro smazání obrázku.');
@@ -233,6 +279,12 @@ class BookController
 
         if (!$book) {
             $this->addErrorMessage('Kniha nebyla nalezena.');
+            header('Location: ' . BASE_URL . '/index.php');
+            exit;
+        }
+
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
+            $this->addErrorMessage('Nemáte oprávnění mazat obrázky této knihy, protože nejste jejím autorem.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
@@ -270,10 +322,9 @@ class BookController
             'images' => array_values($images)
         ]);
 
-        $bookModel->update($bookId, $bookData, $_SESSION['user_id']);
+        $bookModel->update($bookId, $bookData, (int) $_SESSION['user_id']);
 
         $this->addSuccessMessage('Obrázek byl smazán.');
-
         header('Location: ' . BASE_URL . '/index.php?url=book/edit/' . $bookId);
         exit;
     }

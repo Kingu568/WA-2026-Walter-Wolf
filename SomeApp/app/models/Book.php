@@ -55,7 +55,7 @@ class Book
         ]);
     }
 
-    public function update($id, BookDTO $bookData)
+    public function update($id, BookDTO $bookData, ?int $updatedBy = null)
     {
         $sql = "UPDATE books
                 SET title = :title,
@@ -67,7 +67,8 @@ class Book
                     isbn = :isbn,
                     description = :description,
                     link = :link,
-                    images = :images
+                    images = :images,
+                    updated_by = :updated_by
                 WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
@@ -83,7 +84,8 @@ class Book
             ':isbn' => $bookData->isbn !== '' ? $bookData->isbn : null,
             ':description' => $bookData->description !== '' ? $bookData->description : null,
             ':link' => $bookData->link !== '' ? $bookData->link : null,
-            ':images' => json_encode($bookData->images)
+            ':images' => json_encode($bookData->images),
+            ':updated_by' => $updatedBy
         ]);
     }
 
