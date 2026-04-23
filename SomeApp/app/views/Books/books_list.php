@@ -40,7 +40,7 @@
                                             Detail
                                         </a>
 
-                                        <?php if (isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] === (int) $book['created_by']): ?>
+                                        <?php if (isset($_SESSION['user_id']) &&((int) $_SESSION['user_id'] === (int) $book['created_by'] || !empty($_SESSION['is_admin']))): ?>
                                             <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
                                                class="px-3 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-sm font-medium transition">
                                                 Upravit

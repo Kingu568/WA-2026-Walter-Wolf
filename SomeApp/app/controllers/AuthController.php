@@ -87,6 +87,7 @@ class AuthController
             header('Location: ' . BASE_URL . '/index.php?url=auth/login');
             exit;
         }
+        
 
         $email = htmlspecialchars(trim($_POST['email'] ?? ''));
         $password = $_POST['password'] ?? '';
@@ -99,6 +100,7 @@ class AuthController
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = !empty($user['nickname']) ? $user['nickname'] : $user['username'];
+            $_SESSION['is_admin'] = $user['is_admin'];
 
             $this->addSuccessMessage('Vítejte zpět, ' . $_SESSION['user_name'] . '!');
             header('Location: ' . BASE_URL . '/index.php');

@@ -25,9 +25,9 @@
                            class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
                 </div>
 
-                <div>
+                <div><!-- pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"--> 
                     <label for="password" class="block mb-2 text-sm font-medium text-sky-700">Heslo *</label>
-                    <input type="password" id="password" name="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                    <input type="password" id="password" name="password" required      
                         title="Heslo musí mít alespoň 8 znaků, jedno malé písmeno, jedno velké písmeno a jedno číslo."
                         class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
                 </div>

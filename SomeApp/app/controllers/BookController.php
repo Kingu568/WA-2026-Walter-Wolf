@@ -116,8 +116,8 @@ class BookController
             exit;
         }
 
-        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
-            $this->addErrorMessage('Nemáte oprávnění upravovat tuto knihu, protože nejste jejím autorem.');
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id'] && empty($_SESSION['is_admin'])) {
+            $this->addErrorMessage('Nemáte oprávnění upravovat tuto knihu.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
@@ -154,8 +154,8 @@ class BookController
             exit;
         }
 
-        if ((int) $existingBook['created_by'] !== (int) $_SESSION['user_id']) {
-            $this->addErrorMessage('Nemáte oprávnění ukládat změny u této knihy, protože nejste jejím autorem.');
+        if ((int) $existingBook['created_by'] !== (int) $_SESSION['user_id'] && empty($_SESSION['is_admin'])) {
+            $this->addErrorMessage('Nemáte oprávnění ukládat změny u této knihy.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
@@ -226,8 +226,8 @@ class BookController
             exit;
         }
 
-        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
-            $this->addErrorMessage('Nemáte oprávnění smazat tuto knihu, protože nejste jejím autorem.');
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id'] && empty($_SESSION['is_admin'])) {
+            $this->addErrorMessage('Nemáte oprávnění smazat tuto knihu.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
@@ -283,8 +283,8 @@ class BookController
             exit;
         }
 
-        if ((int) $book['created_by'] !== (int) $_SESSION['user_id']) {
-            $this->addErrorMessage('Nemáte oprávnění mazat obrázky této knihy, protože nejste jejím autorem.');
+        if ((int) $book['created_by'] !== (int) $_SESSION['user_id'] && empty($_SESSION['is_admin'])) {
+            $this->addErrorMessage('Nemáte oprávnění mazat obrázky této knihy.');
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
