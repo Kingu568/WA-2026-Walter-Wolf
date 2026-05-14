@@ -16,8 +16,16 @@
 
             <div>
                 <label for="password" class="block mb-2 text-sm font-medium text-sky-700">Heslo</label>
-                <input type="password" id="password" name="password" required
-                       class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-300">
+
+                <div class="relative">
+                    <input type="password" id="password" name="password" required
+                           class="password-toggle-field w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 pr-24 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-300">
+
+                    <button type="button"
+                            class="password-toggle-button absolute right-4 top-1/2 -translate-y-1/2 text-sm text-sky-500 hover:text-sky-700 font-medium">
+                        Zobrazit
+                    </button>
+                </div>
             </div>
 
             <button type="submit"
@@ -32,5 +40,22 @@
         </form>
     </div>
 </main>
+
+<script>
+document.querySelectorAll('.password-toggle-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const wrapper = button.closest('.relative');
+        const input = wrapper.querySelector('.password-toggle-field');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.textContent = 'Skrýt';
+        } else {
+            input.type = 'password';
+            button.textContent = 'Zobrazit';
+        }
+    });
+});
+</script>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>

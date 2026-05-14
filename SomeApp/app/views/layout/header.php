@@ -82,8 +82,18 @@
                         $style = $styles[$type] ?? 'bg-white border-sky-200 text-slate-700';
                     ?>
                     <?php foreach ($messages as $message): ?>
-                        <div class="<?= $style ?> border-l-4 p-4 rounded-2xl shadow-sm">
-                            <p class="font-medium text-sm"><?= htmlspecialchars($message) ?></p>
+                        <div class="<?= $style ?> notification border-l-4 p-4 rounded-2xl shadow-sm flex items-start justify-between gap-4 transition-all duration-500">
+                            <p class="font-medium text-sm">
+                                <?= htmlspecialchars($message) ?>
+                            </p>
+
+                            <button
+                                type="button"
+                                class="close-notification text-lg leading-none opacity-60 hover:opacity-100 transition"
+                                aria-label="Zavřít notifikaci"
+                            >
+                                ×
+                            </button>
                         </div>
                     <?php endforeach; ?>
                 <?php endforeach; ?>
@@ -91,3 +101,31 @@
             </div>
         <?php endif; ?>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function closeNotification(notification) {
+                if (!notification) {
+                    return;
+                }
+
+                notification.classList.add('opacity-0', '-translate-y-2');
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }
+
+            document.querySelectorAll('.close-notification').forEach(button => {
+                button.addEventListener('click', () => {
+                    closeNotification(button.closest('.notification'));
+                });
+            });
+
+            document.querySelectorAll('.notification').forEach(notification => {
+                setTimeout(() => {
+                    closeNotification(notification);
+                }, 5000);
+            });
+        });
+    </script>
