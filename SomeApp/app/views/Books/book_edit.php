@@ -19,7 +19,7 @@
                 <div>
                     <label class="block mb-2 text-sm font-medium text-sky-700">ID v databázi</label>
                     <input type="text" value="<?= htmlspecialchars($book['id']) ?>" readonly
-                           class="w-full rounded-2xl bg-slate-100 border border-sky-100 px-4 py-3 text-slate-500">
+                       class="w-full rounded-2xl bg-slate-100 border border-sky-100 px-4 py-3 text-slate-500 select-none pointer-events-none">
                 </div>
 
                 <div>
