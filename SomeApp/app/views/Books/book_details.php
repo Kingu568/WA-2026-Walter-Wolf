@@ -8,10 +8,12 @@
                 ← Zpět
             </a>
 
-            <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
-               class="bg-amber-100 hover:bg-amber-200 text-amber-700 px-4 py-2 rounded-full font-medium transition">
-                Upravit
-            </a>
+            <?php if (isset($_SESSION['user_id']) && ((int) $_SESSION['user_id'] === (int) $book['created_by'] || !empty($_SESSION['is_admin']))): ?>
+                <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
+                class="bg-amber-100 hover:bg-amber-200 text-amber-700 px-4 py-2 rounded-full font-medium transition">
+                    Upravit
+                </a>
+            <?php endif; ?>
         </div>
 
         <div class="border-b border-sky-100 pb-6 mb-6">
@@ -25,11 +27,22 @@
             <div class="bg-sky-50 rounded-2xl p-4"><strong>ID:</strong> <?= htmlspecialchars($book['id']) ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>Název:</strong> <?= htmlspecialchars($book['title']) ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>Autor:</strong> <?= htmlspecialchars($book['author']) ?></div>
-            <div class="bg-sky-50 rounded-2xl p-4"><strong>Kategorie:</strong> <?= htmlspecialchars($book['category'] ?? '—') ?></div>
+            <div class="bg-sky-50 rounded-2xl p-4"><strong>Kategorie:</strong><?= htmlspecialchars($book['category_name'] ?? 'Nezařazeno') ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>Subkategorie:</strong> <?= htmlspecialchars($book['subcategory'] ?? '—') ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>Rok vydání:</strong> <?= htmlspecialchars($book['year'] ?? '—') ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>Cena:</strong> <?= htmlspecialchars($book['price'] ?? '—') ?></div>
             <div class="bg-sky-50 rounded-2xl p-4"><strong>ISBN:</strong> <?= htmlspecialchars($book['isbn'] ?? '—') ?></div>
+            <?php if (!empty($_SESSION['is_admin'])): ?>
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200">
+                    <strong>Vytvořil uživatel ID:</strong>
+                    <?= htmlspecialchars($book['created_by'] ?? '—') ?>
+                </div>
+
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200">
+                    <strong>Poslední úprava uživatelem ID:</strong>
+                    <?= htmlspecialchars($book['updated_by'] ?? '—') ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="mt-6 bg-sky-50 rounded-2xl p-4">

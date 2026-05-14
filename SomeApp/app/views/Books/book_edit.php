@@ -42,8 +42,17 @@
 
                 <div>
                     <label class="block mb-2 text-sm font-medium text-sky-700">Kategorie</label>
-                    <input type="text" name="category" value="<?= htmlspecialchars($book['category'] ?? '') ?>"
-                           class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3">
+                    <select name="category"
+                            class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3">
+                        <option value="">Vyber kategorii</option>
+
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= htmlspecialchars($category['id']) ?>"
+                                <?= (int)($book['category'] ?? 0) === (int)$category['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($category['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div>

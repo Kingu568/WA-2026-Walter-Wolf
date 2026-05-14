@@ -15,17 +15,27 @@ class Book
 
     public function getAll()
     {
-        $sql = "SELECT * FROM books ORDER BY id DESC";
+        $sql = "SELECT books.*, categories.name AS category_name
+                FROM books
+                LEFT JOIN categories ON books.category = categories.id
+                ORDER BY books.id DESC";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($id)
     {
-        $sql = "SELECT * FROM books WHERE id = :id";
+        $sql = "SELECT books.*, categories.name AS category_name
+                FROM books
+                LEFT JOIN categories ON books.category = categories.id
+                WHERE books.id = :id";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -42,7 +52,7 @@ class Book
         return $stmt->execute([
             ':title' => $bookData->title,
             ':author' => $bookData->author,
-            ':category' => $bookData->category !== '' ? $bookData->category : null,
+            ':category' => $bookData->category !== 0 ? $bookData->category : null,
             ':subcategory' => $bookData->subcategory !== '' ? $bookData->subcategory : null,
             ':year' => $bookData->year !== '' && $bookData->year != 0 ? $bookData->year : null,
             ':price' => $bookData->price !== '' && $bookData->price !== null ? $bookData->price : null,
@@ -77,7 +87,7 @@ class Book
             ':id' => $id,
             ':title' => $bookData->title,
             ':author' => $bookData->author,
-            ':category' => $bookData->category !== '' ? $bookData->category : null,
+            ':category' => $bookData->category !== 0 ? $bookData->category : null,
             ':subcategory' => $bookData->subcategory !== '' ? $bookData->subcategory : null,
             ':year' => $bookData->year !== '' && $bookData->year != 0 ? $bookData->year : null,
             ':price' => $bookData->price !== '' && $bookData->price !== null ? $bookData->price : null,
@@ -93,6 +103,7 @@ class Book
     {
         $sql = "DELETE FROM books WHERE id = :id";
         $stmt = $this->db->prepare($sql);
+
         return $stmt->execute([':id' => $id]);
     }
 }

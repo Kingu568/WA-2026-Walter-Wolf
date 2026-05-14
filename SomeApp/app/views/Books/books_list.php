@@ -31,7 +31,7 @@
                                 <td class="px-5 py-4"><?= htmlspecialchars($book['id']) ?></td>
                                 <td class="px-5 py-4 font-semibold text-sky-600"><?= htmlspecialchars($book['title']) ?></td>
                                 <td class="px-5 py-4"><?= htmlspecialchars($book['author']) ?></td>
-                                <td class="px-5 py-4"><?= htmlspecialchars($book['category'] ?? '—') ?></td>
+                                <td class="px-5 py-4"><?= htmlspecialchars($book['category_name'] ?? 'Nezařazeno') ?></td>
                                 <td class="px-5 py-4"><?= htmlspecialchars($book['price'] ?? '—') ?> czk</td>
                                 <td class="px-5 py-4">
                                     <div class="flex flex-wrap gap-2">
@@ -40,7 +40,13 @@
                                             Detail
                                         </a>
 
-                                        <?php if (isset($_SESSION['user_id']) &&((int) $_SESSION['user_id'] === (int) $book['created_by'] || !empty($_SESSION['is_admin']))): ?>
+                                        <?php if (
+                                            isset($_SESSION['user_id']) &&
+                                            (
+                                                (int) $_SESSION['user_id'] === (int) $book['created_by'] ||
+                                                !empty($_SESSION['is_admin'])
+                                            )
+                                        ): ?>
                                             <a href="<?= BASE_URL ?>/index.php?url=book/edit/<?= $book['id'] ?>"
                                                class="px-3 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-sm font-medium transition">
                                                 Upravit

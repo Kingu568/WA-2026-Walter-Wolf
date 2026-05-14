@@ -22,8 +22,16 @@
 
                 <div>
                     <label for="_category" class="block mb-2 text-sm font-medium text-sky-700">Kategorie</label>
-                    <input placeholder="Např. Drama" type="text" id="_category" name="category"
-                           class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
+                    <select id="_category" name="category"
+                            class="w-full rounded-2xl bg-sky-50 border border-sky-200 px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-300">
+                        <option value="">Vyber kategorii</option>
+
+                        <?php foreach ($categories as $category): ?>
+                            <option value="<?= htmlspecialchars($category['id']) ?>">
+                                <?= htmlspecialchars($category['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div>
@@ -94,30 +102,31 @@
                 </a>
             </div>
         </form>
-            <script>
-                const fileInput = document.getElementById('images');
-                const fileTitle = document.getElementById('file-title');
-                const fileInfo = document.getElementById('file-info');
 
-                if (fileInput && fileTitle && fileInfo) {
-                    fileInput.addEventListener('change', function(event) {
-                        const files = event.target.files;
+        <script>
+            const fileInput = document.getElementById('images');
+            const fileTitle = document.getElementById('file-title');
+            const fileInfo = document.getElementById('file-info');
 
-                        if (files.length === 0) {
-                            fileTitle.textContent = 'Klikni pro výběr souborů';
-                            fileTitle.className = 'text-sm font-semibold text-sky-600';
-                            fileInfo.textContent = 'Žádné soubory nebyly vybrány';
-                        } else if (files.length === 1) {
-                            fileTitle.textContent = 'Soubor připraven';
-                            fileTitle.className = 'text-sm font-semibold text-cyan-500';
-                            fileInfo.textContent = files[0].name;
-                        } else {
-                            fileTitle.textContent = 'Soubory připraveny';
-                            fileTitle.className = 'text-sm font-semibold text-cyan-500';
-                            fileInfo.textContent = 'Vybráno celkem: ' + files.length + ' souborů';
-                        }
-                    });
-                }
+            if (fileInput && fileTitle && fileInfo) {
+                fileInput.addEventListener('change', function(event) {
+                    const files = event.target.files;
+
+                    if (files.length === 0) {
+                        fileTitle.textContent = 'Klikni pro výběr souborů';
+                        fileTitle.className = 'text-sm font-semibold text-sky-600';
+                        fileInfo.textContent = 'Žádné soubory nebyly vybrány';
+                    } else if (files.length === 1) {
+                        fileTitle.textContent = 'Soubor připraven';
+                        fileTitle.className = 'text-sm font-semibold text-cyan-500';
+                        fileInfo.textContent = files[0].name;
+                    } else {
+                        fileTitle.textContent = 'Soubory připraveny';
+                        fileTitle.className = 'text-sm font-semibold text-cyan-500';
+                        fileInfo.textContent = 'Vybráno celkem: ' + files.length + ' souborů';
+                    }
+                });
+            }
         </script>
     </div>
 </main>

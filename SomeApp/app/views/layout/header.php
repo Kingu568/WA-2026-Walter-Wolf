@@ -32,8 +32,17 @@
                                 + Přidat knihu
                             </a>
                         </li>
-                        <li class="text-sky-500 text-sm">
-                            Ahoj, <span class="font-semibold"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                        <li class="text-sky-500 text-sm flex items-center gap-2">
+                            Ahoj,
+                            <span class="font-semibold">
+                                <?= htmlspecialchars($_SESSION['user_name']) ?>
+                            </span>
+
+                            <?php if (!empty($_SESSION['is_admin'])): ?>
+                                <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full border border-amber-200">
+                                    ADMIN
+                                </span>
+                            <?php endif; ?>
                         </li>
                         <li>
                             <a href="<?= BASE_URL ?>/index.php?url=auth/logout"

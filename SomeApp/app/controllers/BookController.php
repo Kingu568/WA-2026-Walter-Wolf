@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/Book.php';
+require_once __DIR__ . '/../models/Category.php';
 require_once __DIR__ . '/../dto/BookDTO.php';
 
 class BookController
@@ -20,6 +21,9 @@ class BookController
             header('Location: ' . BASE_URL . '/index.php?url=auth/login');
             exit;
         }
+
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAll();
 
         require_once __DIR__ . '/../views/books/book_create.php';
     }
@@ -121,6 +125,9 @@ class BookController
             header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
+
+        $categoryModel = new Category();
+        $categories = $categoryModel->getAll();
 
         require_once __DIR__ . '/../views/books/book_edit.php';
     }
@@ -378,14 +385,5 @@ class BookController
         }
 
         return $uploadedFiles;
-    }
-
-    protected function requireLogin()
-    {
-        if (!isset($_SESSION['user_id'])) {
-            $this->addErrorMessage('Pro tuto akci musíte být přihlášen.');
-            header('Location: ' . BASE_URL . '/index.php?url=auth/login');
-            exit;
-        }
     }
 }

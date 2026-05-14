@@ -6,7 +6,7 @@ class BookDTO
     public $author;
     public $isbn;
     public $category;
-    public $subcategory;    
+    public $subcategory;
     public $year;
     public $price;
     public $link;
@@ -18,7 +18,10 @@ class BookDTO
         $this->title = trim($data['title'] ?? '');
         $this->author = trim($data['author'] ?? '');
         $this->isbn = trim($data['isbn'] ?? '');
-        $this->category = trim($data['category'] ?? '');
+
+        // category je teď ID z tabulky categories
+        $this->category = (int) ($data['category'] ?? 0);
+
         $this->subcategory = trim($data['subcategory'] ?? '');
         $this->year = $data['year'] ?? 0;
         $this->price = $data['price'] ?? null;
